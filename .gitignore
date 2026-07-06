@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.venv/
+.DS_Store
+*.log
+# runtime/private artifacts never belong in the public trust-layer repo
+*.env
+.env*
+backtest_data/
