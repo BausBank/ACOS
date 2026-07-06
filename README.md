@@ -1,4 +1,4 @@
-# ACOS — the Agent Capital OS
+# ACOS - the Agent Capital OS
 
 Copyright (C) 2026 Baus · ACOS (acos.capital) · License: AGPL-3.0
 
