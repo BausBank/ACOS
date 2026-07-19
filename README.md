@@ -30,6 +30,13 @@ repository is its first shipped layer — **trust**:
 - **x402 Trust Toll** (`core/x402`) — verification sold as a ~$0.001
   nanopayment (HTTP 402 flow, Circle Gateway batch settlement). The live
   wallet runner is intentionally not included.
+- **Circle DCW client** (`core/circle`): a thin async client for Circle
+  Developer-Controlled Wallets. Balances, USDC transfers and arbitrary
+  contract-execution transactions, with per-request RSA-OAEP-SHA256
+  entity-secret encryption. This is the on-chain write path for attestations.
+- **ERC-8004 attestations** (`core/attest`): identity passports (ERC-721),
+  validation records bound to verdict digests, and revocable reputation
+  badges, all on Arc's ERC-8004 registries. Register, badge on PASS, revoke.
 - **Site wiring** (`site/wire.js`) — the static front-end glue that renders a
   snapshot on the public page.
 
@@ -49,8 +56,11 @@ they were sealed before outcomes. That is exactly why it is safe to open.
 | `core/verify` | Open verifier: fills → P&L recompute, cross-check, on-chain anchor history |
 | `core/site` | Snapshot emitter with whitelist redaction, actors feed, anchor maturation |
 | `core/x402` | HTTP 402 Trust Toll: pay-per-verification via Circle Gateway nanopayments (USDC on Arc) |
+| `core/circle` | Async Circle DCW client: balances, USDC transfers, contract execution (RSA-OAEP entity secret) |
+| `core/attest` | ERC-8004 attestation layer: identity passports, validation records, revocable badges on Arc registries |
 | `site/wire.js` | Front-end wiring for the public page |
 | `examples/snapshot.sample.json` | Sample public snapshot (replay run) |
+| `examples/create_circle_wallet.py` | One-shot Circle DCW onboarding: wallet set, entity-secret registration, first wallet |
 
 ## Quickstart
 
@@ -67,7 +77,8 @@ cat examples/snapshot.sample.json
 
 Core packages import with stdlib only; live anchoring/verification against
 chains additionally uses `web3`, `eth-account`, `opentimestamps-client`,
-loaded lazily.
+loaded lazily. The Circle DCW client and attestation layer (`core/circle`,
+`core/attest`) additionally use `httpx` and `cryptography`.
 
 ## Live deployment
 
