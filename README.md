@@ -1,33 +1,33 @@
-# ACOS - the Agent Capital OS
+# ACOS [ AGENT CAPITAL OS ]
 
 Copyright (C) 2026 Baus · ACOS (acos.capital) · License: AGPL-3.0
 
 ACOS is an operating system for autonomous agents that manage capital. This
-repository is its first shipped layer — **trust**:
+repository is its first shipped layer - **trust**:
 
-- **VTR (Verifiable Track Record)** — an entity-agnostic journal that lets any
+- **VTR (Verifiable Track Record)** - an entity-agnostic journal that lets any
   agent prove its history cryptographically, without revealing how it trades.
-- **Trust Toll** — verification sold as a ~$0.001 x402 nanopayment.
+- **Trust Toll** - verification sold as a ~$0.001 x402 nanopayment.
 
 > Agents that cannot lie about their past.
 
-## What this is
+## How it works
 
-- **Commit-reveal decision journal** (`core/journal`) — every decision is
+- **Commit-reveal decision journal** (`core/journal`) - every decision is
   sealed (hash commitment) *before* the outcome is known, then revealed after.
   Records form an append-only hash chain: rewriting history breaks the chain.
-- **Dual anchoring** (`core/anchor`) — the journal head is anchored hourly
+- **Dual anchoring** (`core/anchor`) - the journal head is anchored hourly
   into **Arc** (an on-chain transaction carrying the chain head) and into
   **Bitcoin via OpenTimestamps**. Two independent clocks; forging a past
   requires rewriting both.
-- **Open verifier** (`core/verify`) — recomputes P&L from *public venue
+- **Open verifier** (`core/verify`) - recomputes P&L from *public venue
   fills* and cross-checks it against the claimed journal, then checks every
   anchor on-chain. Anyone can run it; no trust in the operator required.
-- **Public-site snapshot emitter** (`core/site`) — turns a verified journal
+- **Public-site snapshot emitter** (`core/site`) - turns a verified journal
   into a public JSON snapshot using **whitelist redaction**: only explicitly
   allowed keys survive; internal signal vocabulary and commit secrets are
   structurally excluded (`core/site/redact.py`).
-- **x402 Trust Toll** (`core/x402`) — verification sold as a ~$0.001
+- **x402 Trust Toll** (`core/x402`) - verification sold as a ~$0.001
   nanopayment (HTTP 402 flow, Circle Gateway batch settlement). The live
   wallet runner is intentionally not included.
 - **Circle DCW client** (`core/circle`): a thin async client for Circle
@@ -37,15 +37,11 @@ repository is its first shipped layer — **trust**:
 - **ERC-8004 attestations** (`core/attest`): identity passports (ERC-721),
   validation records bound to verdict digests, and revocable reputation
   badges, all on Arc's ERC-8004 registries. Register, badge on PASS, revoke.
-- **Site wiring** (`site/wire.js`) — the static front-end glue that renders a
+- **Site wiring** (`site/wire.js`) - the static front-end glue that renders a
   snapshot on the public page.
 
-## What is NOT here
-
-The trading strategy. The edge stays private. This layer contains **zero
-strategy logic by design** — the journal, anchors, verifier and snapshot
-emitter are entity-agnostic and never see how decisions are made, only *that*
-they were sealed before outcomes. That is exactly why it is safe to open.
+Every module is entity-agnostic and contains zero strategy logic: it never
+sees how decisions are made, only that each one was sealed before its outcome.
 
 ## Package map
 
@@ -73,6 +69,12 @@ python -m core.site --journal <journal.jsonl> --out snapshot.json
 
 # see what a snapshot looks like
 cat examples/snapshot.sample.json
+
+# register an agent identity on the ERC-8004 registries (dry-run by default, add --live for a real tx)
+python -m core.attest register --actor my-agent
+
+# read a badge back from the chain
+python -m core.attest status --request-hash <0x...>
 ```
 
 Core packages import with stdlib only; live anchoring/verification against
